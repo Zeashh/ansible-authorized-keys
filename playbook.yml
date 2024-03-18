@@ -1,6 +1,8 @@
 - name: Copy specified SSH keys to all hosts
   hosts: all
   gather_facts: true
+  # vars:
+  #   - use_yaml: ...
   tasks:
     - name: Set variables
       set_fact:
