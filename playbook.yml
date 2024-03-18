@@ -1,0 +1,96 @@
+- name: Copy specified SSH keys to all hosts
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Set variables
+      set_fact:
+        USE_YAML: "{{ use_yaml | default(false) }}"
+        USE_GIT: "{{ use_git | default(false) }}"
+        AUTHORIZED_KEYS_SRC_DIR: "{{ authorized_keys_src_dir | default(use_git|default(false) | ternary(repo_dest|default('/tmp/ansible-authorized-keys'), '.')) }}"
+        AUTHORIZED_KEYS_DEST_DIR: "{{ authorized_keys_dest_dir | default('/home/' + lookup('env','USER') + '/.ssh' ) }}"
+        FILE_NAME: "{{ file_name | default(use_yaml | default(false) | ternary('authorized_keys.yml', 'authorized_keys')) }}"
+        GIT_URL: "{{ git_url | default(omit) }}"
+        GIT_AUTHENTICATE: "{{ git_authenticate | default(false) }}"
+        GIT_USERNAME: "{{ git_username | default(omit) }}"
+        GIT_PASSWORD: "{{ git_password | default(omit) }}"
+        REPO_DEST: "{{ repo_dest | default('/tmp/ansible-authorized-keys') }}"
+
+    - name: Delete repo directory if it already exists
+      file:
+        path: "{{ REPO_DEST }}"
+        state: absent
+      when: USE_GIT is true
+
+    - name: Create repo directory
+      file:
+        path: "{{ REPO_DEST }}"
+        state: directory
+      delegate_to: localhost
+      when: USE_GIT is true
+
+    - name: Download authorized key list with authentication
+      git:
+        repo: "https://{{ GIT_USERNAME | urlencode }}:{{ GIT_PASSWORD | urlencode }}@{{ GIT_URL }}"
+        dest: "{{ REPO_DEST }}"
+      delegate_to: localhost
+      when: USE_GIT is true and GIT_USERNAME is defined and GIT_PASSWORD is defined
+
+    - name: Download authorized key list
+      git:
+        repo: "https://{{ GIT_URL }}"
+        dest: "{{ REPO_DEST }}"
+      delegate_to: localhost
+      run_once: true
+      when: USE_GIT is defined and USE_GIT is true and GIT_USERNAME is not defined
+
+    - name: Create temporary file
+      file:
+        path: "/tmp/authorized_keys.tmp"
+        state: touch
+        mode: 0600
+      when: USE_YAML is true
+
+    - name: Include authorized key list as variable list
+      include_vars: "{{ AUTHORIZED_KEYS_SRC_DIR }}/{{ FILE_NAME }}"
+      when: USE_YAML is true
+
+    - name: Copy authorized keys to a temporary file
+      lineinfile:
+        path: "/tmp/authorized_keys.tmp"
+        insertafter: EOF
+        line: "{{ item }}"
+      loop: "{{ authorized_keys }}"
+      no_log: true
+      when: USE_YAML is true
+
+    - name: Copy new authorized_keys file to destination
+      copy:
+        src: "{{ AUTHORIZED_KEYS_SRC_DIR }}/{{ FILE_NAME }}"
+        dest: "{{ AUTHORIZED_KEYS_DEST_DIR }}/authorized_keys"
+        mode: 0600
+        owner: "{{ lookup('env','USER') }}"
+        group: "{{ lookup('env','USER') }}"
+      when: USE_YAML is false
+
+    - name: Copy new authorized_keys file to destination
+      copy:
+        remote_src: true
+        src: "/tmp/authorized_keys.tmp"
+        dest: "{{ AUTHORIZED_KEYS_DEST_DIR }}/authorized_keys"
+        mode: 0600
+        owner: "{{ lookup('env','USER') }}"
+        group: "{{ lookup('env','USER') }}"
+      when: USE_YAML is true
+
+    - name: Cleanup
+      file:
+        path: "{{ REPO_DEST }}"
+        state: absent
+      delegate_to: localhost
+      when: USE_GIT is true
+
+    - name: Cleanup
+      file:
+        path: "/tmp/authorized_keys.tmp"
+        state: absent
+      when: USE_YAML is true
