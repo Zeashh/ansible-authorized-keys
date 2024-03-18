@@ -22,8 +22,8 @@ Example YAML file if in use:
 
 ``` yaml
 authorized_keys:
-	- ssh-rsa kdfjhslkhfjlsdkhgjslkghjs user@host
-	- ...
+  - ssh-rsa kdfjhslkhfjlsdkhgjslkghjs user@host
+  - ...
 ```
 # Ansible variables
 
