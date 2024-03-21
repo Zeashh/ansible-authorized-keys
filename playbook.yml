@@ -2,7 +2,7 @@
   hosts: all
   gather_facts: true
   # vars:
-  #   - use_yaml: ...
+  #   use_yaml: ...
   tasks:
     - name: Set variables
       set_fact:
