@@ -2,7 +2,8 @@
   hosts: all
   gather_facts: true
   # vars:
-  #   use_yaml: ...
+  #   use_yaml: true
+  #   ...
   tasks:
     - name: Set variables
       set_fact:
@@ -21,6 +22,8 @@
       file:
         path: "{{ REPO_DEST }}"
         state: absent
+      delegate_to: localhost
+      run_once: true
       when: USE_GIT is true
 
     - name: Create repo directory
@@ -35,6 +38,7 @@
         repo: "https://{{ GIT_USERNAME | urlencode }}:{{ GIT_PASSWORD | urlencode }}@{{ GIT_URL }}"
         dest: "{{ REPO_DEST }}"
       delegate_to: localhost
+      run_once: true
       when: USE_GIT is true and GIT_USERNAME is defined and GIT_PASSWORD is defined
 
     - name: Download authorized key list
@@ -89,6 +93,7 @@
         path: "{{ REPO_DEST }}"
         state: absent
       delegate_to: localhost
+      run_once: true
       when: USE_GIT is true
 
     - name: Cleanup
