@@ -57,6 +57,8 @@
 
     - name: Include authorized key list as variable list
       include_vars: "{{ AUTHORIZED_KEYS_SRC_DIR }}/{{ FILE_NAME }}"
+      delegate_to: localhost
+      run_once: true
       when: USE_YAML is true
 
     - name: Copy authorized keys to a temporary file
