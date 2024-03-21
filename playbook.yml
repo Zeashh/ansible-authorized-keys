@@ -10,7 +10,7 @@
         USE_YAML: "{{ use_yaml | default(false) }}"
         USE_GIT: "{{ use_git | default(false) }}"
         AUTHORIZED_KEYS_SRC_DIR: "{{ authorized_keys_src_dir | default(use_git|default(false) | ternary(repo_dest|default('/tmp/ansible-authorized-keys'), '.')) }}"
-        FILE_NAME: "{{ file_name | default(use_yaml | default(false) | ternary('authorized_keys.yml', 'authorized_keys')) }}"
+        FILE_NAME: "{{ file_name | default(use_yaml|default(false) | ternary('authorized_keys.yml', 'authorized_keys')) }}"
         GIT_URL: "{{ git_url | default(omit) }}"
         GIT_AUTHENTICATE: "{{ git_authenticate | default(false) }}"
         GIT_USERNAME: "{{ git_username | default(omit) }}"
@@ -46,7 +46,7 @@
         dest: "{{ REPO_DEST }}"
       delegate_to: localhost
       run_once: true
-      when: USE_GIT is defined and USE_GIT is true and GIT_USERNAME is not defined
+      when: USE_GIT is defined and USE_GIT is true and GIT_USERNAME is defined
 
     - name: Create temporary file
       file:
