@@ -46,7 +46,7 @@
         dest: "{{ REPO_DEST }}"
       delegate_to: localhost
       run_once: true
-      when: USE_GIT is defined and USE_GIT is true and GIT_USERNAME is defined
+      when: USE_GIT is defined and USE_GIT is true and GIT_USERNAME is not defined
 
     - name: Create temporary file
       file:
