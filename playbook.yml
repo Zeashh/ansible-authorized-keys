@@ -10,7 +10,6 @@
         USE_YAML: "{{ use_yaml | default(false) }}"
         USE_GIT: "{{ use_git | default(false) }}"
         AUTHORIZED_KEYS_SRC_DIR: "{{ authorized_keys_src_dir | default(use_git|default(false) | ternary(repo_dest|default('/tmp/ansible-authorized-keys'), '.')) }}"
-        AUTHORIZED_KEYS_DEST_DIR: "{{ authorized_keys_dest_dir | default((lookup('env', 'USER') == 'root') | ternary('/root/.ssh', '/home/' + lookup('env','USER') + '/.ssh' )) }}"
         FILE_NAME: "{{ file_name | default(use_yaml | default(false) | ternary('authorized_keys.yml', 'authorized_keys')) }}"
         GIT_URL: "{{ git_url | default(omit) }}"
         GIT_AUTHENTICATE: "{{ git_authenticate | default(false) }}"
@@ -72,20 +71,20 @@
     - name: Copy new authorized_keys file to destination
       copy:
         src: "{{ AUTHORIZED_KEYS_SRC_DIR }}/{{ FILE_NAME }}"
-        dest: "{{ authorized_keys_dest_dir | default((ansible_user == 'root') | ternary('/root/.ssh', '/home/' + lookup('env','USER') + '/.ssh' )) }}/authorized_keys"
+        dest: "{{ authorized_keys_dest_dir | default((ansible_env.USER == 'root') | ternary('/root/.ssh', '/home/' + lookup('env','USER') + '/.ssh' )) }}/authorized_keys"
         mode: 0600
-        owner: "{{ lookup('env','USER') }}"
-        group: "{{ lookup('env','USER') }}"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
       when: USE_YAML is false
 
     - name: Copy new authorized_keys file to destination
       copy:
         remote_src: true
         src: "/tmp/authorized_keys.tmp"
-        dest: "{{ authorized_keys_dest_dir | default((ansible_user == 'root') | ternary('/root/.ssh', '/home/' + lookup('env','USER') + '/.ssh' )) }}/authorized_keys"
+        dest: "{{ authorized_keys_dest_dir | default((ansible_env.USER == 'root') | ternary('/root/.ssh', '/home/' + lookup('env','USER') + '/.ssh' )) }}/authorized_keys"
         mode: 0600
-        owner: "{{ lookup('env','USER') }}"
-        group: "{{ lookup('env','USER') }}"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
       when: USE_YAML is true
 
     - name: Cleanup
