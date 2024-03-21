@@ -6,7 +6,7 @@ This simple Ansible playbook can be used to copy authorized SSH keys to remote L
 - Basic `authorized_keys` file stored in an HTTPS Git repository (downloads repository to local machine and deletes it after execution)
 - YAML file (formatted the same way as the local one) stored in an HTTPS Git repository
 
-It is made in a way that it can be easily integrated with Ansible Tower/AWX, though you will need a custom credential type for Git authentication.
+It is made in a way that it can be easily integrated with Ansible Tower/AWX.
 
 # Use
 
