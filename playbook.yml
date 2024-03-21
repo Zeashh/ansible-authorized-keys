@@ -30,6 +30,7 @@
         path: "{{ REPO_DEST }}"
         state: directory
       delegate_to: localhost
+      run_once: true
       when: USE_GIT is true
 
     - name: Download authorized key list with authentication
