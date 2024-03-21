@@ -1,6 +1,6 @@
 # Introduction
 
-This simple Ansible playbook can be used to copy authorized SSH keys to remote Linux servers **for a single user (NOT ROOT)**. It cleans up keys that are no longer in use and can use one of several sources for authorized keys:
+This simple Ansible playbook can be used to copy authorized SSH keys to remote Linux servers **for a single user**. It cleans up keys that are no longer in use and can use one of several sources for authorized keys:
 - Local basic `authorized_keys` file, one key after another **(default)**
 - Local YAML file, a list of keys that allows for a more organized approach with support for per-key comments
 - Basic `authorized_keys` file stored in an HTTPS Git repository (downloads repository to local machine and deletes it after execution)
