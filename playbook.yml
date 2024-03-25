@@ -74,7 +74,7 @@
     - name: Copy new authorized_keys file to destination
       copy:
         src: "{{ AUTHORIZED_KEYS_SRC_DIR }}/{{ FILE_NAME }}"
-        dest: "{{ authorized_keys_dest_dir | default(ansible_env.HOME + '/.ssh/authorized_keys') }}"
+        dest: "{{ ansible_env.HOME + '/' + authorized_keys_dest_dir | default(ansible_env.HOME + '/.ssh/authorized_keys') }}"
         mode: 0600
         owner: "{{ ansible_env.USER }}"
         group: "{{ ansible_env.USER }}"
@@ -84,7 +84,7 @@
       copy:
         remote_src: true
         src: "/tmp/authorized_keys.tmp"
-        dest: "{{ authorized_keys_dest_dir | default(ansible_env.HOME + '/.ssh/authorized_keys') }}"
+        dest: "{{ ansible_env.HOME + '/' + authorized_keys_dest_dir | default(ansible_env.HOME + '/.ssh/authorized_keys') }}"
         mode: 0600
         owner: "{{ ansible_env.USER }}"
         group: "{{ ansible_env.USER }}"
