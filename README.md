@@ -63,8 +63,8 @@ When using the terminal utility, variables can be specified in the playbook, or 
 | `use_yaml`                 | Whether to read authorized keys from a YAML formatted file or not                                                                       | bool   | False                                                    | No       |
 | `use_git`                  | Whether to download the source file from a Git repository or not                                                                        | bool   | False                                                    | No       |
 | `authorized_keys_src_dir`  | Path on local machine where the `authorized_keys` file is stored                                                                        | string | Playbook directory or `repo_dest` if defined             | No       |
-| `authorized_keys_dest_dir` | Destination path on the remote server for the file containing authorized keys                                                           | string | `/home/SSH_USER/.ssh/authorized_keys`                    | No       |
-| `file_name`                | Name or full path (when using Git and storing the file in a subdirectory) of the file which contains the source list of authorized keys | String | `authorized_keys` or `authorized_keys.yml` if using YAML |          |
+| `authorized_keys_dest_dir` | Destination path relative to user home directory on the remote server for the file containing authorized keys                           | string | `/home/SSH_USER/.ssh/authorized_keys`                    | No       |
+| `file_name`                | Name or full path (when using Git and storing the file in a subdirectory) of the file which contains the source list of authorized keys | String | `authorized_keys` or `authorized_keys.yml` if using YAML | No       | 
   
 
 - Git variables:
